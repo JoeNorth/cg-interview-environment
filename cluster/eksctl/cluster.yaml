@@ -10,7 +10,7 @@ metadata:
   version: "1.33"
   tags:
     karpenter.sh/discovery: ${EKS_CLUSTER_NAME}
-    created-by: chainguard-interview
+    created-by: cg-interview
     env: ${EKS_CLUSTER_NAME}
 iam:
   withOIDC: true
@@ -31,14 +31,15 @@ managedNodeGroups:
       maxUnavailablePercentage: 50
     labels:
       workshop-default: "yes"
-addonsConfig:
-  autoApplyPodIdentityAssociations: true
 addons:
-  - name: vpc-cni
-    version: 1.19.2
-    configurationValues: '{"env":{"ENABLE_PREFIX_DELEGATION":"true", "ENABLE_POD_ENI":"true", "POD_SECURITY_GROUP_ENFORCING_MODE":"standard"},"enableNetworkPolicy": "true", "nodeAgent": {"enablePolicyEventLogs": "true"}}'
-    resolveConflicts: overwrite
-  - name: eks-pod-identity-agent
-    resolveConflicts: overwrite
-  - name: aws-ebs-csi-driver
-    resolveConflicts: overwrite
+- name: kube-proxy
+  version: latest
+- name: vpc-cni
+  version: latest
+  attachPolicyARNs:
+    - "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+- name: coredns
+  version: latest
+- name: aws-ebs-csi-driver
+  wellKnownPolicies:
+    ebsCSIController: true
