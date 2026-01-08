@@ -14,7 +14,7 @@ cat << EOF > ~/.local/share/code-server/User/settings.json
   "workbench.startupEditor": "terminal",
   "explorer.confirmDragAndDrop": false,
   "terminal.integrated.fontSize": 20,
-  "editor.fontSize": 16
+  "editor.fontSize": 20
 }
 
 EOF
