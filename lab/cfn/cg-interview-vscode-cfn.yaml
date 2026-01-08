@@ -126,8 +126,8 @@ Resources:
       SecurityGroupIngress:
         - Description: Allow HTTP from CloudFront
           IpProtocol: tcp
-          FromPort: 80
-          ToPort: 8889
+          FromPort: 8890
+          ToPort: 8890
           SourcePrefixListId:
             !FindInMap [PrefixListID, !Ref "AWS::Region", PrefixList]
       SecurityGroupEgress:
@@ -296,7 +296,7 @@ Resources:
                   systemctl enable --now caddy
 
                   tee /etc/caddy/Caddyfile <<EOF
-                  http://${EksWorkshopIdeCloudFrontDistribution.DomainName}:8889 {
+                  http://${EksWorkshopIdeCloudFrontDistribution.DomainName}:8890 {
                     reverse_proxy 127.0.0.1:8889
                   }
                   EOF
@@ -563,7 +563,7 @@ Resources:
             Id: !Sub CloudFront-${AWS::StackName}
             CustomOriginConfig:
               OriginProtocolPolicy: http-only
-              HTTPPort: 8889
+              HTTPPort: 8890
 
 Outputs:
   IdeUrl:
