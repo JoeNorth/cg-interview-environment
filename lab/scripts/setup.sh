@@ -43,6 +43,7 @@ function create-cluster() {
   URL=https://raw.githubusercontent.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}/refs/heads/${REPOSITORY_REF}/cluster/eksctl/cluster.yaml
   echo "Creating cluster with eksctl from \$URL"
   curl -fsSL \$URL | envsubst | eksctl create cluster -f -
+  kubectl apply -f /cg-interview/questions/ebs-sc.yaml
   helm install wordpress oci://ghcr.io/max-allan-cgr/helm-charts/wordpress
 }
 

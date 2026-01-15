@@ -217,6 +217,6 @@ EOT
   chmod +x /usr/local/bin/update-ide
 fi
 
-mkdir -p /cg-interview
+mkdir -p /cg-interview/questions
 
-chown ec2-user /cg-interview
+chown -R ec2-user /cg-interview
