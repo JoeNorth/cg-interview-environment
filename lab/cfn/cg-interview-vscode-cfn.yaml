@@ -365,7 +365,7 @@ Resources:
             Action:
               - sts:AssumeRole
       Policies:
-        - PolicyName: ide-password-${Environment}
+        - PolicyName: !Sub ${AWS::StackName}-ide-password
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -402,6 +402,15 @@ Resources:
       ManagedPolicyName: !Sub ${AWS::StackName}-base
       PolicyDocument:
         file: ./iam/policies/base.yaml
+
+  InterviewBasePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Roles:
+        - !Ref InterviewIdeRole
+      ManagedPolicyName: !Sub ${AWS::StackName}-ec2
+      PolicyDocument:
+        file: ./iam/policies/ec2.yaml
 
   InterviewIdeInstanceProfile:
     Type: AWS::IAM::InstanceProfile
