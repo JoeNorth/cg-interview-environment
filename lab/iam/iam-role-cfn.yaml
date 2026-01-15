@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Creates an IAM role for the EKS workshop IDE
+Description: Creates an IAM role for the Chainguard Interview Environment IDE
 Resources:
   EksWorkshopIdeRole:
     Type: AWS::IAM::Role

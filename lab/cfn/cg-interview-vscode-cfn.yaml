@@ -1,21 +1,25 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Creates a code-server IDE for the EKS workshop
+# Note: CloudFormation resource logical IDs (EksWorkshop*) are retained from the
+# original AWS EKS Workshop project. Changing these would trigger resource recreation.
+# External-facing resources (tags, descriptions) have been updated to reflect the
+# Chainguard Interview Environment branding.
+Description: Creates a code-server IDE for the Chainguard Interview Environment
 Parameters:
   InstanceVolumeSize:
     Type: Number
-    Description: The Size in GB of the Cloud9 Instance Volume.
+    Description: The Size in GB of the code-server Instance Volume.
     Default: 30
   RepositoryOwner:
     Type: String
-    Description: The owner of the GitHub repository to be used to bootstrap Cloud9
+    Description: The owner of the GitHub repository to be used to bootstrap code-server
     Default: "JoeNorth"
   RepositoryName:
     Type: String
-    Description: The name of the GitHub repository to be used to bootstrap Cloud9
+    Description: The name of the GitHub repository to be used to bootstrap code-server
     Default: "cg-interview-environment"
   RepositoryRef:
     Type: String
-    Description: The Git reference to be used to bootstrap Cloud9
+    Description: The Git reference to be used to bootstrap code-server
     Default: "main"
   ResourcesPrecreated:
     Type: String
@@ -266,7 +270,7 @@ Resources:
       DocumentFormat: YAML
       Content:
         schemaVersion: "2.2"
-        description: Bootstrap Cloud9 Instance
+        description: Bootstrap code-server Instance
         mainSteps:
           - action: aws:runShellScript
             name: EksWorkshopIdebootstrap
@@ -479,7 +483,7 @@ Resources:
       IamInstanceProfile: !Ref EksWorkshopIdeInstanceProfile
       Tags:
         - Key: type
-          Value: eksworkshop-ide
+          Value: cg-interview-ide
 
   EksWorkshopIdePassword:
     Type: AWS::SecretsManager::Secret

@@ -30,7 +30,7 @@ managedNodeGroups:
     updateConfig:
       maxUnavailablePercentage: 50
     labels:
-      workshop-default: "yes"
+      cg-interview-default: "yes"
 addons:
 - name: kube-proxy
   version: latest

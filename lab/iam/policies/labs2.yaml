@@ -35,7 +35,7 @@ Statement:
       - ssm:AddTagsToResource
     Resource:
       - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${Env}*
-      - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/eksworkshop/${Env}*
+      - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/cg-interview/${Env}*
   - Effect: Allow
     Action:
       - ssm:GetParameter
