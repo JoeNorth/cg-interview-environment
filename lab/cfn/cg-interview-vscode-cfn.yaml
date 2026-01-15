@@ -365,7 +365,7 @@ Resources:
             Action:
               - sts:AssumeRole
       Policies:
-        - PolicyName: ide-password
+        - PolicyName: ide-password-${Environment}
           PolicyDocument:
             Version: "2012-10-17"
             Statement:

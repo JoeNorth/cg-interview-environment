@@ -53,3 +53,6 @@ devenv.local.nix
 
 # direnv
 .direnv
+
+# Claude
+.claude/
