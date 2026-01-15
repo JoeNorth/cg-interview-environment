@@ -403,59 +403,6 @@ Resources:
       PolicyDocument:
         file: ./iam/policies/base.yaml
 
-  InterviewEc2Policy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      Roles:
-        - !Ref InterviewIdeRole
-      ManagedPolicyName: !Sub ${AWS::StackName}-ec2
-      PolicyDocument:
-        file: ./iam/policies/ec2.yaml
-
-  InterviewLabsPolicy1:
-    Type: AWS::IAM::ManagedPolicy
-    DependsOn:
-      - InterviewIdeRole
-    Properties:
-      Roles:
-        - !Ref InterviewIdeRole
-      ManagedPolicyName: !Sub ${AWS::StackName}-labs1
-      PolicyDocument:
-        file: ./iam/policies/labs1.yaml
-
-  InterviewLabsPolicy2:
-    Type: AWS::IAM::ManagedPolicy
-    DependsOn:
-      - InterviewIdeRole
-    Properties:
-      Roles:
-        - !Ref InterviewIdeRole
-      ManagedPolicyName: !Sub ${AWS::StackName}-labs2
-      PolicyDocument:
-        file: ./iam/policies/labs2.yaml
-
-  InterviewLabsPolicy3:
-    Type: AWS::IAM::ManagedPolicy
-    DependsOn:
-      - InterviewIdeRole
-    Properties:
-      Roles:
-        - !Ref InterviewIdeRole
-      ManagedPolicyName: !Sub ${AWS::StackName}-labs3
-      PolicyDocument:
-        file: ./iam/policies/labs3.yaml
-
-  InterviewTroubleshootPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    DependsOn:
-      - InterviewIdeRole
-    Properties:
-      Roles:
-        - !Ref InterviewIdeRole
-      ManagedPolicyName: !Sub ${AWS::StackName}-troubleshoot
-      PolicyDocument:
-        file: ./iam/policies/troubleshoot.yaml
-
   InterviewIdeInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
