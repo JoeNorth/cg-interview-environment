@@ -38,7 +38,22 @@ function prepare-environment() {
 }
 
 function use-cluster() { bash /usr/local/bin/use-cluster \$1; source ~/.bashrc.d/env.bash; }
-function create-cluster() { URL=https://raw.githubusercontent.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}/refs/heads/${REPOSITORY_REF}/cluster/eksctl/cluster.yaml; echo "Creating cluster with eksctl from \$URL"; curl -fsSL \$URL | envsubst | eksctl create cluster -f -; }
+
+function create-cluster() {
+  URL=https://raw.githubusercontent.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}/refs/heads/${REPOSITORY_REF}/cluster/eksctl/cluster.yaml
+  echo "Creating cluster with eksctl from \$URL"
+  curl -fsSL \$URL | envsubst | eksctl create cluster -f -
+  helm install wordpress oci://ghcr.io/max-allan-cgr/helm-charts/wordpress
+}
+
+function delete-cluster() {
+  helm uninstall wordpress || true
+  kubectl delete pvc --all --all-namespaces || true
+  URL=https://raw.githubusercontent.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}/refs/heads/${REPOSITORY_REF}/cluster/eksctl/cluster.yaml
+  echo "Deleting cluster with eksctl from \$URL"
+  curl -fsSL \$URL | envsubst | eksctl delete cluster -f -
+}
+
 EOT
 
 REPOSITORY_OWNER=${REPOSITORY_OWNER:-"JoeNorth"}
@@ -51,10 +66,6 @@ export REPOSITORY_NAME='${REPOSITORY_NAME}'
 export REPOSITORY_REF='${REPOSITORY_REF}'
 EOT
 fi
-
-RESOURCES_PRECREATED=${RESOURCES_PRECREATED:-"false"}
-
-echo "export RESOURCES_PRECREATED='${RESOURCES_PRECREATED}'" > ~/.bashrc.d/infra.bash
 
 /usr/local/bin/kubectl completion bash >  ~/.bashrc.d/kubectl_completion.bash
 echo "alias k=kubectl" >> ~/.bashrc.d/kubectl_completion.bash

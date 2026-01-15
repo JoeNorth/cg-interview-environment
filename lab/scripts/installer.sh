@@ -2,6 +2,8 @@
 
 set -e
 
+k9s_version='0.50.16'
+
 # renovate: depName=kubernetes/kubernetes
 kubectl_version='1.33.5'
 
@@ -72,6 +74,13 @@ yum install --quiet -y findutils jq tar gzip zsh git diffutils wget \
   nc yum-utils
 
 pip3 install -q awscurl==0.28 urllib3==1.26.6
+
+#k9s
+download "https://github.com/derailed/k9s/releases/download/v${k9s_version}/k9s_Linux_${arch_name}.tar.gz" "k9s.tar.gz"
+tar zxf k9s.tar.gz
+chmod +x k9s
+mv ./k9s /usr/local/bin
+rm -rf k9s.tar.gz LICENSE README.md
 
 # kubectl
 download "https://dl.k8s.io/release/v$kubectl_version/bin/linux/${arch_name}/kubectl" "kubectl"

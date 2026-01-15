@@ -4,7 +4,7 @@ set -e
 
 bash /tmp/setup.sh
 
-ln -s /cg-interview/manifests /home/ec2-user/environment/cg-interview
+ln -s /cg-interview/questions /home/ec2-user/environment/cg-interview
 
 if [ ! -z "$EKS_CLUSTER_NAME" ]; then
   aws eks update-kubeconfig --name $EKS_CLUSTER_NAME

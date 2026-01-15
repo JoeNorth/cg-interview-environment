@@ -33,9 +33,4 @@ sed -i "s/eksctl_checksum='.*'/eksctl_checksum='$EKSCTL_CHECKSUM'/" lab/scripts/
 yq -i ".metadata.version = \"$K8S\"" cluster/eksctl/cluster.yaml
 yq -i ".managedNodeGroups[0].releaseVersion = \"$AMI\"" cluster/eksctl/cluster.yaml
 
-# Using line numbers in Terraform to target only the right resources
-sed -i "9s/default.*= \".*\"/default     = \"$K8S\"/" cluster/terraform/variables.tf
-sed -i "15s/default.*= \".*\"/default     = \"$AMI\"/" cluster/terraform/variables.tf
-
-
 sed -i "s/KUBECTL_VERSION='.*'/KUBECTL_VERSION='v$K8SLong'/" hack/lib/kubectl-version.sh

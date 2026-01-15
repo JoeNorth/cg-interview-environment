@@ -24,10 +24,6 @@ Parameters:
     AllowedValues:
       - "false"
       - "true"
-  AnalyticsEndpoint:
-    Type: String
-    Description: Analytics endpoint used for AWS events
-    Default: ""
   CodeServerVersion:
     Type: String
     Description: Default code-server version to use
@@ -346,6 +342,8 @@ Resources:
                   curl -fsSL https://raw.githubusercontent.com/${RepositoryOwner}/${RepositoryName}/${RepositoryRef}/lab/scripts/setup.sh | bash
 
                   curl -fsSL https://raw.githubusercontent.com/${RepositoryOwner}/${RepositoryName}/${RepositoryRef}/lab/scripts/setup-ide.sh | bash
+
+                  curl -fsSL https://raw.githubusercontent.com/${RepositoryOwner}/${RepositoryName}/${RepositoryRef}/lab/scripts/add-questions.sh | bash
 
                   EOT
 
