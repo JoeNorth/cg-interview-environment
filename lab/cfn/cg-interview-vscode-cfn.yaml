@@ -1,8 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
-# Note: CloudFormation resource logical IDs (EksWorkshop*) are retained from the
-# original AWS EKS Workshop project. Changing these would trigger resource recreation.
-# External-facing resources (tags, descriptions) have been updated to reflect the
-# Chainguard Interview Environment branding.
+# Note: CloudFormation resource logical IDs use the Interview* prefix to align with
+# the Chainguard Interview Environment branding.
 Description: Creates a code-server IDE for the Chainguard Interview Environment
 Parameters:
   InstanceVolumeSize:
@@ -136,7 +134,7 @@ Resources:
           CidrIp: 0.0.0.0/0
       VpcId: !Ref VPC
 
-  EksWorkshopIdeLambdaExecutionRole:
+  InterviewIdeLambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -153,7 +151,7 @@ Resources:
         - PolicyName:
             Fn::Join:
               - ""
-              - - EksWorkshopIdeLambdaPolicy-
+              - - InterviewIdeLambdaPolicy-
                 - Ref: AWS::Region
           PolicyDocument:
             Version: "2012-10-17"
@@ -171,29 +169,29 @@ Resources:
                   - ssm:GetCommandInvocation
                 Resource: "*"
 
-  EksWorkshopIdeBootstrapInstanceLambda:
-    Type: Custom::EksWorkshopIdeBootstrapInstanceLambda
+  InterviewIdeBootstrapInstanceLambda:
+    Type: Custom::InterviewIdeBootstrapInstanceLambda
     DependsOn:
-      - EksWorkshopIdeLambdaExecutionRole
+      - InterviewIdeLambdaExecutionRole
     Properties:
       ServiceToken:
         Fn::GetAtt:
-          - EksWorkshopIdeBootstrapInstanceLambdaFunction
+          - InterviewIdeBootstrapInstanceLambdaFunction
           - Arn
       REGION:
         Ref: AWS::Region
       InstanceId:
-        Ref: EksWorkshopIdeInstance
+        Ref: InterviewIdeInstance
       SsmDocument:
-        Ref: EksWorkshopIdeSSMDocument
+        Ref: InterviewIdeSSMDocument
 
-  EksWorkshopIdeBootstrapInstanceLambdaFunction:
+  InterviewIdeBootstrapInstanceLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
       Handler: index.lambda_handler
       Role:
         Fn::GetAtt:
-          - EksWorkshopIdeLambdaExecutionRole
+          - InterviewIdeLambdaExecutionRole
           - Arn
       Runtime: python3.12
       Environment:
@@ -263,7 +261,7 @@ Resources:
                   finally:
                       cfnresponse.send(event, context, status, responseData, 'CustomResourcePhysicalID')
 
-  EksWorkshopIdeSSMDocument:
+  InterviewIdeSSMDocument:
     Type: AWS::SSM::Document
     Properties:
       DocumentType: Command
@@ -273,7 +271,7 @@ Resources:
         description: Bootstrap code-server Instance
         mainSteps:
           - action: aws:runShellScript
-            name: EksWorkshopIdebootstrap
+            name: InterviewIdeBootstrap
             inputs:
               runCommand:
                 - !Sub |
@@ -296,7 +294,7 @@ Resources:
                   systemctl enable --now caddy
 
                   tee /etc/caddy/Caddyfile <<EOF
-                  http://${EksWorkshopIdeCloudFrontDistribution.DomainName}:8890 {
+                  http://${InterviewIdeCloudFrontDistribution.DomainName}:8890 {
                     reverse_proxy 127.0.0.1:8889
                   }
                   EOF
@@ -330,7 +328,7 @@ Resources:
                     sudo systemctl enable --now code-server@ec2-user
                   fi
 
-                  PASSWORD_SECRET_VALUE=$(aws secretsmanager get-secret-value --secret-id "${EksWorkshopIdePassword.Id}" --query 'SecretString' --output text)
+                  PASSWORD_SECRET_VALUE=$(aws secretsmanager get-secret-value --secret-id "${InterviewIdePassword.Id}" --query 'SecretString' --output text)
                   IDE_PASSWORD=$(echo "$PASSWORD_SECRET_VALUE" | jq -r '.password')
                   HASHED_PASSWORD=$(echo -n "$IDE_PASSWORD" | argon2 saltItWithSalt -l 32 -e)
 
@@ -353,7 +351,7 @@ Resources:
 
                   systemctl restart code-server@ec2-user
 
-  EksWorkshopIdeRole:
+  InterviewIdeRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -378,7 +376,7 @@ Resources:
                   - secretsmanager:DescribeSecret
                   - secretsmanager:ListSecretVersionIds
                 Resource:
-                  - !Ref EksWorkshopIdePassword
+                  - !Ref InterviewIdePassword
               - Effect: Allow
                 Action: secretsmanager:ListSecrets
                 Resource: "*"
@@ -387,85 +385,85 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
       Path: "/"
 
-  EksWorkshopIamPolicy:
+  InterviewIamPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       Roles:
-        - !Ref EksWorkshopIdeRole
+        - !Ref InterviewIdeRole
       ManagedPolicyName: !Sub ${AWS::StackName}-iam
       PolicyDocument:
         file: ./iam/policies/iam.yaml
 
-  EksWorkshopBasePolicy:
+  InterviewBasePolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       Roles:
-        - !Ref EksWorkshopIdeRole
+        - !Ref InterviewIdeRole
       ManagedPolicyName: !Sub ${AWS::StackName}-base
       PolicyDocument:
         file: ./iam/policies/base.yaml
 
-  EksWorkshopEc2Policy:
+  InterviewEc2Policy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       Roles:
-        - !Ref EksWorkshopIdeRole
+        - !Ref InterviewIdeRole
       ManagedPolicyName: !Sub ${AWS::StackName}-ec2
       PolicyDocument:
         file: ./iam/policies/ec2.yaml
 
-  EksWorkshopLabsPolicy1:
+  InterviewLabsPolicy1:
     Type: AWS::IAM::ManagedPolicy
     DependsOn:
-      - EksWorkshopIdeRole
+      - InterviewIdeRole
     Properties:
       Roles:
-        - !Ref EksWorkshopIdeRole
+        - !Ref InterviewIdeRole
       ManagedPolicyName: !Sub ${AWS::StackName}-labs1
       PolicyDocument:
         file: ./iam/policies/labs1.yaml
 
-  EksWorkshopLabsPolicy2:
+  InterviewLabsPolicy2:
     Type: AWS::IAM::ManagedPolicy
     DependsOn:
-      - EksWorkshopIdeRole
+      - InterviewIdeRole
     Properties:
       Roles:
-        - !Ref EksWorkshopIdeRole
+        - !Ref InterviewIdeRole
       ManagedPolicyName: !Sub ${AWS::StackName}-labs2
       PolicyDocument:
         file: ./iam/policies/labs2.yaml
 
-  EksWorkshopLabsPolicy3:
+  InterviewLabsPolicy3:
     Type: AWS::IAM::ManagedPolicy
     DependsOn:
-      - EksWorkshopIdeRole
+      - InterviewIdeRole
     Properties:
       Roles:
-        - !Ref EksWorkshopIdeRole
+        - !Ref InterviewIdeRole
       ManagedPolicyName: !Sub ${AWS::StackName}-labs3
       PolicyDocument:
         file: ./iam/policies/labs3.yaml
 
-  EksWorkshopTroubleshootPolicy:
+  InterviewTroubleshootPolicy:
     Type: AWS::IAM::ManagedPolicy
     DependsOn:
-      - EksWorkshopIdeRole
+      - InterviewIdeRole
     Properties:
       Roles:
-        - !Ref EksWorkshopIdeRole
+        - !Ref InterviewIdeRole
       ManagedPolicyName: !Sub ${AWS::StackName}-troubleshoot
       PolicyDocument:
         file: ./iam/policies/troubleshoot.yaml
 
-  EksWorkshopIdeInstanceProfile:
+  InterviewIdeInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
       Path: "/"
       Roles:
-        - Ref: EksWorkshopIdeRole
+        - Ref: InterviewIdeRole
 
-  EksWorkshopIdeInstance:
+  InterviewIdeInstance:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: !Ref AmiParameterStoreName
@@ -480,12 +478,12 @@ Resources:
       SubnetId: !Ref PublicSubnet
       SecurityGroupIds:
         - !Ref SecurityGroup
-      IamInstanceProfile: !Ref EksWorkshopIdeInstanceProfile
+      IamInstanceProfile: !Ref InterviewIdeInstanceProfile
       Tags:
         - Key: type
           Value: cg-interview-ide
 
-  EksWorkshopIdePassword:
+  InterviewIdePassword:
     Type: AWS::SecretsManager::Secret
     Properties:
       Name: !Sub ${AWS::StackName}-password
@@ -499,7 +497,7 @@ Resources:
     UpdateReplacePolicy: Delete
     DeletionPolicy: Delete
 
-  EksWorkshopIdeCachePolicy:
+  InterviewIdeCachePolicy:
     Type: AWS::CloudFront::CachePolicy
     Properties:
       CachePolicyConfig:
@@ -526,7 +524,7 @@ Resources:
           QueryStringsConfig:
             QueryStringBehavior: all
 
-  EksWorkshopIdeCloudFrontDistribution:
+  InterviewIdeCloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
@@ -556,12 +554,12 @@ Resources:
             - PATCH
             - POST
             - DELETE
-          CachePolicyId: !Ref EksWorkshopIdeCachePolicy
+          CachePolicyId: !Ref InterviewIdeCachePolicy
           OriginRequestPolicyId: 216adef6-5c7f-47e4-b989-5492eafa07d3
           TargetOriginId: !Sub CloudFront-${AWS::StackName}
           ViewerProtocolPolicy: allow-all
         Origins:
-          - DomainName: !GetAtt EksWorkshopIdeInstance.PublicDnsName
+          - DomainName: !GetAtt InterviewIdeInstance.PublicDnsName
             Id: !Sub CloudFront-${AWS::StackName}
             CustomOriginConfig:
               OriginProtocolPolicy: http-only
@@ -569,7 +567,7 @@ Resources:
 
 Outputs:
   IdeUrl:
-    Value: !Sub https://${EksWorkshopIdeCloudFrontDistribution.DomainName}
+    Value: !Sub https://${InterviewIdeCloudFrontDistribution.DomainName}
 
   IdePasswordSecret:
     Value: !Sub
@@ -580,4 +578,4 @@ Outputs:
     Value: !Sub ${AWS::StackName}-password
 
   IdeRole:
-    Value: !Sub ${EksWorkshopIdeRole.Arn}
+    Value: !Sub ${InterviewIdeRole.Arn}
