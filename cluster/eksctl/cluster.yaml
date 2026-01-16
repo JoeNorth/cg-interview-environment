@@ -43,3 +43,6 @@ addons:
 - name: aws-ebs-csi-driver
   wellKnownPolicies:
     ebsCSIController: true
+  configurationValues:
+    defaultStorageClass:
+      enabled: true
