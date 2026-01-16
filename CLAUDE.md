@@ -19,8 +19,11 @@ The project is derived from the AWS EKS Workshop codebase.
 # Deploy the IDE infrastructure (CloudFormation stack with EC2 + code-server)
 make deploy-ide
 
-# Deploy the IDE for a specific environment (prefixes cluster name)
-make deploy-ide environment=test
+# Deploy the IDE for a specific candidate (prefixes cluster name)
+make deploy-ide candidate=test
+
+# Deploy the IDE for a specific candidate using a specific git branch
+make deploy-ide candidate=test branch=feature-x
 
 # Destroy the IDE infrastructure
 make destroy-ide
@@ -44,35 +47,43 @@ use-cluster <cluster-name>
 ### Local Development Commands
 
 ```bash
-# Open a shell in the Docker container for the specified environment
-make shell environment=<env-name>
+# Open a shell in the Docker container for the specified candidate
+make shell candidate=<candidate-name>
 
 # Open the IDE in the container
-make ide environment=<env-name>
+make ide candidate=<candidate-name>
 ```
 
 ### Infrastructure Management
 
 ```bash
 # Create EKS cluster infrastructure (called by create-cluster)
-bash hack/create-infrastructure.sh [environment]
+bash hack/create-infrastructure.sh [candidate]
 
 # Destroy EKS cluster and cleanup
-bash hack/destroy-infrastructure.sh [environment]
+bash hack/destroy-infrastructure.sh [candidate]
 
 # Update IAM role policies
-bash hack/update-iam-role.sh [environment]
+bash hack/update-iam-role.sh [candidate]
 ```
 
 ## Architecture
 
-### Environment Naming
+### Candidate Naming
 
-The system uses an optional `environment` parameter to support multiple parallel deployments:
-- Without environment: cluster name is `cg-interview`
-- With environment: cluster name is `cg-interview-${environment}`
+The system uses an optional `candidate` parameter to support multiple parallel deployments:
+- Without candidate: cluster name is `cg-interview`
+- With candidate: cluster name is `cg-interview-${candidate}`
 
 This allows multiple interview environments to coexist in the same AWS account.
+
+### Branch Selection
+
+The system supports a `branch` parameter to control which git branch is used for fetching cluster configurations and scripts:
+- Default: `main`
+- Custom: Any valid git branch name (e.g., `branch=feature-x`)
+
+The branch parameter is passed through to the EC2 instance and used by the `create-cluster` and `delete-cluster` bash functions to fetch the eksctl configuration from the correct branch.
 
 ### Two-Layer Infrastructure
 
@@ -162,10 +173,12 @@ The interview questions/scenarios are stored in the `questions/` directory.
 ### Environment Variables
 
 Key environment variables (set in `hack/lib/common-env.sh`):
-- `EKS_CLUSTER_NAME`: Derived from optional environment parameter
+- `EKS_CLUSTER_NAME`: Derived from optional candidate parameter
 - `AWS_REGION`: Defaults to us-west-2 if not set
 - `IDE_ROLE_NAME`: `${EKS_CLUSTER_NAME}-ide-role`
 - `IDE_ROLE_ARN`: Constructed from account ID and role name
+- `candidate`: Optional parameter for candidate-specific deployments
+- `branch`: Git branch for fetching cluster configs (default: main)
 
 ### Bash Function Aliases
 
@@ -190,7 +203,7 @@ These allow the IDE to pull cluster configs and scripts from a forked/modified r
 
 IAM policies are in `lab/iam/policies/*.yaml`. After modifying:
 ```bash
-bash hack/update-iam-role.sh [environment]
+bash hack/update-iam-role.sh [candidate]
 ```
 
 This updates the CloudFormation stack with the new policies.
@@ -203,14 +216,14 @@ Edit `cluster/eksctl/cluster.yaml`. The configuration supports environment varia
 
 The IDE configuration is in `lab/cfn/cg-interview-vscode-cfn.yaml`. After changes:
 ```bash
-make deploy-ide environment=<env-name>
+make deploy-ide candidate=<candidate-name>
 ```
 
 ### Testing Locally
 
 Use the Docker container to test scripts without deploying to AWS:
 ```bash
-make shell environment=test
+make shell candidate=test
 ```
 
 This gives you an interactive shell with all the tools installed.

@@ -39,13 +39,12 @@ function create-cluster() {
   URL=https://raw.githubusercontent.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}/refs/heads/${REPOSITORY_REF}/cluster/eksctl/cluster.yaml
   echo "Creating cluster with eksctl from \$URL"
   curl -fsSL \$URL | envsubst | eksctl create cluster -f -
-  kubectl apply -f /cg-interview/questions/ebs-sc.yaml
   helm install wordpress oci://ghcr.io/max-allan-cgr/helm-charts/wordpress
 }
 
 function delete-cluster() {
   helm uninstall wordpress || true
-  kubectl delete pvc --all --all-namespaces || true
+  kubectl wait --for=delete -A --all pvc --timeout=600s
   URL=https://raw.githubusercontent.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}/refs/heads/${REPOSITORY_REF}/cluster/eksctl/cluster.yaml
   echo "Deleting cluster with eksctl from \$URL"
   curl -fsSL \$URL | envsubst | eksctl delete cluster -f -

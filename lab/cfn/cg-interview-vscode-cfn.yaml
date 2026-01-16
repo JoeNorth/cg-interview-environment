@@ -33,7 +33,7 @@ Parameters:
   AmiParameterStoreName:
     Type: "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>"
     Default: "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64"
-  Environment:
+  Candidate:
     Type: String
     Description: For testing purposes only
     Default: ""
@@ -285,7 +285,7 @@ Resources:
 
                   systemctl enable --now docker
 
-                  export environment="${Environment}"
+                  export candidate="${Candidate}"
 
                   source <(curl -fsSL https://raw.githubusercontent.com/${RepositoryOwner}/${RepositoryName}/${RepositoryRef}/hack/lib/common-env.sh)
 
@@ -347,6 +347,7 @@ Resources:
 
                   curl -fsSL https://raw.githubusercontent.com/${RepositoryOwner}/${RepositoryName}/${RepositoryRef}/lab/scripts/add-questions.sh | bash
 
+                  ln -s /cg-interview/questions ~/environment/questions
                   EOT
 
                   systemctl restart code-server@ec2-user
@@ -403,7 +404,7 @@ Resources:
       PolicyDocument:
         file: ./iam/policies/base.yaml
 
-  InterviewBasePolicy:
+  InterviewEc2Policy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       Roles:

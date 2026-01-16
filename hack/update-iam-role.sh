@@ -1,6 +1,6 @@
 #!/bin/bash
 
-environment=$1
+candidate=$1
 
 set -Eeuo pipefail
 set -u

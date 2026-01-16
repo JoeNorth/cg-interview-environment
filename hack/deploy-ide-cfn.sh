@@ -1,6 +1,8 @@
 #!/bin/bash
 
-environment=$1
+candidate=$1
+branch=$2
+branch=${branch:-"main"}
 
 set -e
 
@@ -14,5 +16,5 @@ bash $SCRIPT_DIR/build-ide-cfn.sh $outfile
 
 aws cloudformation deploy --stack-name "$EKS_CLUSTER_NAME-ide" \
   --capabilities CAPABILITY_NAMED_IAM --disable-rollback \
-  --parameter-overrides Environment="$environment" \
+  --parameter-overrides Candidate="$candidate" RepositoryRef="$branch" \
   --template-file $outfile
