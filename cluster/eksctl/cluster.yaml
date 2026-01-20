@@ -44,3 +44,4 @@ addons:
   wellKnownPolicies:
     ebsCSIController: true
   configurationValues: "{\"defaultStorageClass\": {\"enabled\": true}}"
+  resolveConflicts: overwrite
