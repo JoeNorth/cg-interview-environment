@@ -1,9 +1,9 @@
-environment=${environment:-""}
+candidate=${candidate:-""}
 
-if [ -z "$environment" ]; then
+if [ -z "$candidate" ]; then
   export EKS_CLUSTER_NAME="cg-interview"
 else
-  export EKS_CLUSTER_NAME="cg-interview-${environment}"
+  export EKS_CLUSTER_NAME="cg-interview-${candidate}"
 fi
 
 AWS_REGION=${AWS_REGION:-""}

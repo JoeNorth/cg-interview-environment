@@ -24,13 +24,13 @@ managedNodeGroups:
     desiredCapacity: 3
     minSize: 3
     maxSize: 6
-    instanceType: m5.large
+    instanceType: m7i-flex.large
     privateNetworking: true
     releaseVersion: "1.33.0-20250704"
     updateConfig:
       maxUnavailablePercentage: 50
     labels:
-      workshop-default: "yes"
+      cg-interview-default: "yes"
 addons:
 - name: kube-proxy
   version: latest
@@ -43,3 +43,5 @@ addons:
 - name: aws-ebs-csi-driver
   wellKnownPolicies:
     ebsCSIController: true
+  configurationValues: "{\"defaultStorageClass\": {\"enabled\": true}}"
+  resolveConflicts: overwrite

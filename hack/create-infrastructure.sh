@@ -1,6 +1,6 @@
 #!/bin/bash
 
-environment=$1
+candidate=$1
 
 set -Eeuo pipefail
 set -u
@@ -9,7 +9,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 source $SCRIPT_DIR/lib/common-env.sh
 
-bash $SCRIPT_DIR/update-iam-role.sh $environment
+bash $SCRIPT_DIR/update-iam-role.sh $candidate
 
 sleep 5
 
@@ -20,5 +20,5 @@ if [ $cluster_exists -eq 0 ]; then
   echo "Cluster ${EKS_CLUSTER_NAME} already exists"
 else
   echo "Creating cluster ${EKS_CLUSTER_NAME}"
-  bash $SCRIPT_DIR/exec.sh "${environment}" 'cat /cluster/eksctl/cluster.yaml | envsubst | eksctl create cluster -f -'
+  bash $SCRIPT_DIR/exec.sh "${candidate}" 'cat /cluster/eksctl/cluster.yaml | envsubst | eksctl create cluster -f -'
 fi

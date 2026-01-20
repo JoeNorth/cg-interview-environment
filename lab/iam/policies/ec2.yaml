@@ -29,6 +29,7 @@ Statement:
           - m5.large
           - t4g.medium
           - c*.large
+          - m7i-flex.large
   - Effect: Allow
     Action:
       - ec2:CreateVpc

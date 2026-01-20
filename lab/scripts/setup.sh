@@ -10,10 +10,6 @@ if [[ ! -d "~/.bashrc.d" ]]; then
   echo 'for file in ~/.bashrc.d/*.bash; do source "$file"; done' >> ~/.bashrc
 fi
 
-if [ ! -z "$CLOUD9_ENVIRONMENT_ID" ]; then
-  echo "aws cloud9 update-environment --environment-id $CLOUD9_ENVIRONMENT_ID --managed-credentials-action DISABLE &> /dev/null || true" > ~/.bashrc.d/c9.bash
-fi
-
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 
 cat << EOT > ~/.bashrc.d/aws.bash
@@ -43,13 +39,12 @@ function create-cluster() {
   URL=https://raw.githubusercontent.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}/refs/heads/${REPOSITORY_REF}/cluster/eksctl/cluster.yaml
   echo "Creating cluster with eksctl from \$URL"
   curl -fsSL \$URL | envsubst | eksctl create cluster -f -
-  kubectl apply -f /cg-interview/questions/ebs-sc.yaml
   helm install wordpress oci://ghcr.io/max-allan-cgr/helm-charts/wordpress
 }
 
 function delete-cluster() {
   helm uninstall wordpress || true
-  kubectl delete pvc --all --all-namespaces || true
+  kubectl wait --for=delete -A --all pvc --timeout=600s
   URL=https://raw.githubusercontent.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}/refs/heads/${REPOSITORY_REF}/cluster/eksctl/cluster.yaml
   echo "Deleting cluster with eksctl from \$URL"
   curl -fsSL \$URL | envsubst | eksctl delete cluster -f -
