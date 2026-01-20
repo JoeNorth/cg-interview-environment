@@ -40,14 +40,14 @@ make deploy-ide environment=bob
 ```
 
 **Naming Convention:**
-- Without `environment`: Creates resources named `cg-interview-*`
-- With `environment=alice`: Creates resources named `cg-interview-alice-*`
+- Without `candidate`: Creates resources named `cg-interview-*`
+- With `candidate=alice`: Creates resources named `cg-interview-alice-*`
 
 This allows multiple interview environments to coexist in the same AWS account without conflicts.
 
 ### Deploy a Single/Default Environment
 
-If you only need one environment or are testing, you can omit the environment parameter:
+If you only need one environment or are testing, you can omit the candidate parameter:
 
 ```shell
 make deploy-ide
@@ -60,8 +60,8 @@ This creates resources with the default name `cg-interview-*`.
 1. **Find the CloudFormation Stack**
 
    Go to the [CloudFormation Console](https://us-west-2.console.aws.amazon.com/cloudformation/home) and find your stack:
-   - With environment parameter: `cg-interview-<environment>-ide` (e.g., `cg-interview-alice-ide`)
-   - Without environment parameter: `cg-interview-ide`
+   - With candidate parameter: `cg-interview-<candidate>-ide` (e.g., `cg-interview-alice-ide`)
+   - Without candidate parameter: `cg-interview-ide`
 
 2. **Retrieve the Password**
 
@@ -98,7 +98,7 @@ The cluster creation takes approximately 15-20 minutes.
 Follow the interview guide to:
 1. Clone the necessary repositories for interview materials
 2. Deploy interview-specific applications to the cluster
-3. Provide the IDE URL and password to the interviewee
+3. Provide the IDE URL and password to the candiadate
 
 ## Managing Multiple Environments
 
@@ -117,7 +117,7 @@ When an interview is complete, destroy the environment to free up AWS resources:
 
 ```shell
 # For a specific environment
-make destroy-ide environment=alice
+make destroy-ide candidate=alice
 
 # For the default environment
 make destroy-ide
@@ -128,7 +128,7 @@ make destroy-ide
 1. Log into the IDE
 2. Run `delete-cluster` in the terminal
 3. Wait for cluster deletion to complete (~10 minutes)
-4. Then run `make destroy-ide environment=<name>` from your local machine
+4. Then run `make destroy-ide candidate=<name>` from your local machine
 
 Alternatively, manually delete the cluster and associated resources from the AWS console.
 

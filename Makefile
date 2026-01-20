@@ -1,10 +1,5 @@
-terraform_context='terraform'
-module='-'
 candidate=''
 branch=main
-shell_command=''
-shell_simple_command=''
-glob='-'
 
 .PHONY: shell
 shell:
