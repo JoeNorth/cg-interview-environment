@@ -35,7 +35,7 @@ Parameters:
     Default: "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64"
   Candidate:
     Type: String
-    Description: For testing purposes only
+    Description: The name of the candidate for whom this IDE is being created
     Default: ""
 
 Mappings:

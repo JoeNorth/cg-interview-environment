@@ -55,6 +55,59 @@ make deploy-ide
 
 This creates resources with the default name `cg-interview-*`.
 
+### Advanced Deployment Options
+
+#### Using a Custom Git Branch
+
+By default, the IDE environment fetches scripts and configurations from the `main` branch. To test changes from a different branch, use the `branch` parameter:
+
+```shell
+# Deploy using a feature branch
+make deploy-ide candidate=alice branch=feature-new-tools
+
+# Test branch changes without a specific candidate
+make deploy-ide branch=experimental
+```
+
+This is useful when:
+- Testing infrastructure changes before merging to main
+- Deploying candidate-specific customizations
+- Running multiple environment variants for different interview types
+
+**What it does**: The `branch` parameter sets the `RepositoryRef` CloudFormation parameter, which controls which git branch is used to fetch:
+- Installation scripts (`installer.sh`, `setup.sh`, etc.)
+- Cluster configuration files
+- Interview question materials
+
+#### Preview Deployment with Dry-Run Mode
+
+Before deploying, you can preview the CloudFormation template and verify parameters using dry-run mode:
+
+```shell
+# Preview deployment for a specific candidate
+make deploy-ide candidate=alice dry-run=true
+
+# Preview with custom branch
+make deploy-ide candidate=bob branch=feature-x dry-run=true
+
+# Preview default deployment
+make deploy-ide dry-run=true
+```
+
+**Dry-run output includes**:
+- Candidate name (auto-generated if not specified)
+- Branch/repository reference
+- Cluster name that would be created
+- Complete CloudFormation template rendered to stdout
+
+**When to use dry-run**:
+- Verifying naming conventions before creating resources
+- Reviewing IAM policies and permissions
+- Debugging CloudFormation template issues
+- Documenting the infrastructure as code
+
+**Note**: Dry-run mode does NOT create any AWS resources or make any API calls. It only renders and displays the template that would be deployed.
+
 ### Access the IDE
 
 1. **Find the CloudFormation Stack**
@@ -98,7 +151,7 @@ The cluster creation takes approximately 15-20 minutes.
 Follow the interview guide to:
 1. Clone the necessary repositories for interview materials
 2. Deploy interview-specific applications to the cluster
-3. Provide the IDE URL and password to the candiadate
+3. Provide the IDE URL and password to the candidate
 
 ## Managing Multiple Environments
 
