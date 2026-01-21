@@ -33,10 +33,10 @@ To support multiple concurrent interviews, use the `environment` parameter to cr
 
 ```shell
 # For interviewee Alice
-make deploy-ide environment=alice
+make deploy-ide candidate=alice
 
 # For interviewee Bob
-make deploy-ide environment=bob
+make deploy-ide candidate=bob
 ```
 
 **Naming Convention:**
