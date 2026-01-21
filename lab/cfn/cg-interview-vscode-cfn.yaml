@@ -19,13 +19,10 @@ Parameters:
     Type: String
     Description: The Git reference to be used to bootstrap code-server
     Default: "main"
-  ResourcesPrecreated:
+  Candidate:
     Type: String
-    Description: Whether lab infrastructure has been pre-provisioned
-    Default: "false"
-    AllowedValues:
-      - "false"
-      - "true"
+    Description: The name of the candidate for whom this IDE is being created
+    Default: ""
   CodeServerVersion:
     Type: String
     Description: Default code-server version to use
@@ -33,10 +30,6 @@ Parameters:
   AmiParameterStoreName:
     Type: "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>"
     Default: "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64"
-  Candidate:
-    Type: String
-    Description: The name of the candidate for whom this IDE is being created
-    Default: ""
 
 Mappings:
   PrefixListID:
@@ -311,7 +304,6 @@ Resources:
                   export REPOSITORY_OWNER="${RepositoryOwner}"
                   export REPOSITORY_NAME="${RepositoryName}"
                   export REPOSITORY_REF="${RepositoryRef}"
-                  export RESOURCES_PRECREATED="${ResourcesPrecreated}"
 
                   curl -fsSL https://raw.githubusercontent.com/${RepositoryOwner}/${RepositoryName}/${RepositoryRef}/lab/scripts/installer.sh | bash
 

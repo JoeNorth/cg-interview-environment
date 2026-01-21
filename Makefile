@@ -1,6 +1,6 @@
 candidate=''
-branch=main
-dry-run=false
+branch=''
+dry-run=true
 
 .PHONY: shell
 shell:
