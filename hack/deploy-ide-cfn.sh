@@ -52,6 +52,11 @@ detect_git_repo() {
 # Detect repository info
 read repo_owner repo_name < <(detect_git_repo)
 
+# Skip AWS credential checks in dry-run mode
+if [ "$dry_run" = "true" ]; then
+  export SKIP_CREDENTIALS=true
+fi
+
 source $SCRIPT_DIR/lib/common-env.sh
 
 if [ "$dry_run" = "true" ]; then
