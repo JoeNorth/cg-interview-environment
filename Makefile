@@ -1,6 +1,6 @@
 candidate=''
 branch=''
-dry-run=true
+dry-run=false
 
 .PHONY: shell
 shell:
@@ -20,4 +20,4 @@ deploy-ide:
 
 .PHONY: destroy-ide
 destroy-ide:
-	bash hack/destroy-ide-cfn.sh $(candidate) $(branch)
+	bash hack/destroy-ide-cfn.sh $(candidate) $(branch) $(dry-run)
